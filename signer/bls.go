@@ -8,6 +8,9 @@ import (
 	blst "github.com/supranational/blst/bindings/go"
 )
 
+// filecoin BLS domain separation tag
+const blsDST = "BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_"
+
 // BLSSigner implements Signer (but not EVMSigner) backed by a BLS private key.
 type BLSSigner struct {
 	raw     []byte
@@ -53,7 +56,7 @@ func (s *BLSSigner) FilecoinAddress() address.Address {
 
 // Sign produces a BLS signature over the raw message bytes (no prehash).
 func (s *BLSSigner) Sign(msg []byte) (*crypto.Signature, error) {
-	sig := new(blst.P2Affine).Sign(s.sk, msg, []byte("BLS_SIG_BLS12381G2_XMD:SHA-256_SSWU_RO_NUL_"))
+	sig := new(blst.P2Affine).Sign(s.sk, msg, []byte(blsDST))
 	return &crypto.Signature{
 		Type: crypto.SigTypeBLS,
 		Data: sig.Compress(),

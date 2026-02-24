@@ -1,6 +1,28 @@
 package signer
 
-import "fmt"
+import (
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+)
+
+// lotusKeyInfo mirrors the JSON structure of a lotus wallet export.
+type lotusKeyInfo struct {
+	Type       string `json:"Type"`
+	PrivateKey []byte `json:"PrivateKey"`
+}
+
+func decodeLotusKey(exported string) (*lotusKeyInfo, error) {
+	raw, err := hex.DecodeString(exported)
+	if err != nil {
+		return nil, fmt.Errorf("decoding hex: %w", err)
+	}
+	var ki lotusKeyInfo
+	if err := json.Unmarshal(raw, &ki); err != nil {
+		return nil, fmt.Errorf("unmarshaling key: %w", err)
+	}
+	return &ki, nil
+}
 
 // FromLotusExport creates a Signer from a lotus-exported private key string.
 // The key type (secp256k1 or bls) is detected automatically.

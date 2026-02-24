@@ -2,8 +2,6 @@ package signer
 
 import (
 	"crypto/ecdsa"
-	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"math/big"
 
@@ -22,6 +20,7 @@ import (
 // Secp256k1Signer implements EVMSigner backed by a secp256k1 private key.
 // It can sign both Filecoin messages and Ethereum transactions.
 type Secp256k1Signer struct {
+	// redundant with ecdsaKey.D but kept for simplicity; unexported, can be changed later
 	raw     []byte          // raw 32-byte scalar
 	ecdsaKey *ecdsa.PrivateKey
 	filAddr  address.Address
@@ -118,22 +117,4 @@ func (s *Secp256k1Signer) EVMAddress() common.Address {
 // Transactor returns bind.TransactOpts for signing Ethereum/FEVM transactions.
 func (s *Secp256k1Signer) Transactor(chainID *big.Int) (*bind.TransactOpts, error) {
 	return bind.NewKeyedTransactorWithChainID(s.ecdsaKey, chainID)
-}
-
-// lotusKeyInfo mirrors the JSON structure of a lotus wallet export.
-type lotusKeyInfo struct {
-	Type       string `json:"Type"`
-	PrivateKey []byte `json:"PrivateKey"`
-}
-
-func decodeLotusKey(exported string) (*lotusKeyInfo, error) {
-	raw, err := hex.DecodeString(exported)
-	if err != nil {
-		return nil, fmt.Errorf("decoding hex: %w", err)
-	}
-	var ki lotusKeyInfo
-	if err := json.Unmarshal(raw, &ki); err != nil {
-		return nil, fmt.Errorf("unmarshaling key: %w", err)
-	}
-	return &ki, nil
 }
