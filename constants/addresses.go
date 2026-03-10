@@ -17,8 +17,7 @@ const (
 const (
 	ChainIDMainnet     int64 = 314
 	ChainIDCalibration int64 = 314159
-	// devnet uses the same chain ID as calibnet (Lotus 2k hardcodes 314159).
-	// distinguish by Network name, not chain ID.
+	ChainIDDevnet      int64 = 31415926
 )
 
 // static addresses not derived from FWSS
@@ -58,12 +57,10 @@ var USDFCAddressesByChainID = map[int64]common.Address{
 	ChainIDCalibration: common.HexToAddress("0xb3042734b608a1B16e9e86B374A3f3e389B4cDf0"),
 }
 
-// NetworkChainIDs maps network to expected chain ID.
-// devnet maps to calibnet's chain ID (Lotus 2k uses 314159).
 var NetworkChainIDs = map[Network]int64{
 	NetworkMainnet:     ChainIDMainnet,
 	NetworkCalibration: ChainIDCalibration,
-	NetworkDevnet:      ChainIDCalibration,
+	NetworkDevnet:      ChainIDDevnet,
 }
 
 // ExpectedChainID returns the expected chain ID for a given network.

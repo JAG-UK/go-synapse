@@ -18,6 +18,7 @@ const (
 	NetworkDevnet      = constants.NetworkDevnet
 	ChainIDMainnet     = constants.ChainIDMainnet
 	ChainIDCalibration = constants.ChainIDCalibration
+	ChainIDDevnet      = constants.ChainIDDevnet
 )
 
 var (
@@ -68,9 +69,9 @@ func NetworkFromChainID(chainID *big.Int) (Network, int64, error) {
 	case ChainIDMainnet:
 		return NetworkMainnet, id, nil
 	case ChainIDCalibration:
-		// devnet also uses 314159 -- callers must disambiguate via
-		// explicit network selection, not chain ID detection.
 		return NetworkCalibration, id, nil
+	case ChainIDDevnet:
+		return NetworkDevnet, id, nil
 	default:
 		return "", 0, fmt.Errorf("unsupported chain ID: %d", id)
 	}
